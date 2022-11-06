@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
-
 from posts.models import Group, Post
 
 User = get_user_model()
@@ -10,18 +9,22 @@ User = get_user_model()
 
 class StaticURLTests(TestCase):
 
-    def setUp(self):
-        self.guest_client = Client()
-        self.user = User.objects.create_user(username='auth')
-        self.authorized_client = Client()
-        self.authorized_client.force_login(self.user)
-        self.post = Post.objects.create(
-            author=self.user,
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.guest_client = Client()
+        cls.user = User.objects.create_user(username='auth')
+        cls.post = Post.objects.create(
+            author=cls.user,
             text='Тест поста')
-        self.group = Group.objects.create(
+        cls.group = Group.objects.create(
             title='Тестовая группа',
             slug='test_slug',
             description='Тестовое описание')
+
+    def setUp(self):
+        self.authorized_author = Client()
+        self.authorized_author.force_login(self.user)
 
     def test_unauthorized_user_urls_status_code(self):
         """Проверка доступа для неавторизованного пользователя."""
