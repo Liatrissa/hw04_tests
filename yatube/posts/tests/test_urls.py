@@ -23,8 +23,8 @@ class StaticURLTests(TestCase):
             description='Тестовое описание')
 
     def setUp(self):
-        self.authorized_author = Client()
-        self.authorized_author.force_login(self.user)
+        self.authorized_client = Client()
+        self.authorized_client.force_login(self.user)
 
     def test_unauthorized_user_urls_status_code(self):
         """Проверка доступа для неавторизованного пользователя."""
