@@ -3,7 +3,7 @@ from http import HTTPStatus
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 
-from yatube.posts.models import Group, Post
+from posts.models import Group, Post
 
 User = get_user_model()
 
