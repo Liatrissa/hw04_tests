@@ -103,16 +103,19 @@ class PostFormTests(TestCase):
         """Проверка запрета редактирования неавторизованным пользователем"""
         posts_count = Post.objects.count()
         form_data = {'text': 'Отредактированный текст поста',
-                     'group': self.group.id
+                     'group': self.edited_group.id
                      }
-        response = self.guest_user.post(reverse('posts:post_create'),
-                                        data=form_data,
-                                        follow=True)
+        response = self.guest_user.post(
+            reverse('posts:post_edit', kwargs={'post_id': self.post.id}),
+            data=form_data, follow=True)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         error = 'Поcт добавлен в базу данных ошибочно'
         self.assertNotEqual(Post.objects.count(),
                             posts_count + 1,
                             error)
+        edited_post = Post.objects.get(id=self.post.id)
+        self.assertNotEqual(edited_post.text, form_data['text'])
+        self.assertNotEqual(edited_post.group.id, form_data['group'])
 
     def test_form_post_edit_post_by_noname(self):
         """Проверка запрета редактирования не автором поста"""
